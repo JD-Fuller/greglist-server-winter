@@ -11,7 +11,9 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     cars: [],
-    activeCar: {}
+    activeCar: {},
+    jobs: [],
+    activeJob: {}
   },
   mutations: {
     setAllCars(state, data) {
@@ -22,6 +24,16 @@ export default new Vuex.Store({
     },
     setActiveCar(state, car) {
       state.activeCar = car;
+    },
+    setAllJobs(state, data) {
+      state.jobs = data;
+    },
+    addJob(state, job) {
+      debugger;
+      state.jobs.push(job);
+    },
+    setActiveJob(state, job) {
+      state.activeJob = job;
     }
   },
   actions: {
@@ -38,10 +50,24 @@ export default new Vuex.Store({
       // dispatch("getAllCars"); //works but is a second call to the server
       commit("addCar", res.data);
     },
-
     async sold({ commit, dispatch }, id) {
       await _api.delete("cars/" + id);
       dispatch("getCars");
+    },
+    async getJobs({ commit, dispatch }) {
+      let res = await _api.get("jobs");
+      commit("setAllJobs", res.data);
+    },
+    async getJobById({ commit, dispatch }, id) {
+      let res = await _api.get("jobs/" + id);
+      commit("setActiveJob", res.data);
+    },
+    async createJob({ commit, dispatch }, job) {
+      debugger;
+      let res = await _api.post("jobs", job);
+      debugger;
+      // dispatch("getAllJobs"); //works but is a second call to the server
+      commit("addJob", res.data);
     }
   }
 });
